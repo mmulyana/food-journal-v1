@@ -1,4 +1,4 @@
-import { collection, getDocs, query, where } from 'firebase/firestore'
+import { collection, getDocs, orderBy, query, where } from 'firebase/firestore'
 import { itemAtom } from '../../atom/items'
 import { db } from '../../utils/firebase'
 import Card from '../../components/card'
@@ -34,7 +34,8 @@ export default function Dashboard() {
     const q = query(
       collection(db, 'items'),
       where('createdAt', '>=', start),
-      where('createdAt', '<=', end)
+      where('createdAt', '<=', end),
+      orderBy('createdAt', 'desc')
     )
     const querySnapshot = await getDocs(q)
     const itemsList = querySnapshot.docs.map((doc) => ({

@@ -3,10 +3,16 @@ import Modal from '../../components/modal'
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore'
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage'
 import { db, storage } from '../../utils/firebase'
+import { format } from 'date-fns'
 
 export function AddModal({ fetchItems }) {
   const [isOpen, setIsOpen] = useState(false)
-  const [newItem, setNewItem] = useState({ name: '', description: '' })
+  const [newItem, setNewItem] = useState({
+    name: '',
+    description: '',
+    date: format(new Date(), 'yyyy-MM-dd'),
+    time: format(new Date(), 'HH:mm'),
+  })
   const [file, setFile] = useState(null)
 
   const handleInputChange = (e) => {
@@ -19,9 +25,15 @@ export function AddModal({ fetchItems }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
+
+    const submissionDate =
+      newItem.date && newItem.time
+        ? new Date(`${newItem.date}T${newItem.time}`)
+        : new Date()
+
     const itemToAdd = {
       ...newItem,
-      createdAt: serverTimestamp(),
+      createdAt: submissionDate,
     }
     if (file) {
       const storageRef = ref(storage, `images/${file.name}`)
@@ -101,6 +113,40 @@ export function AddModal({ fetchItems }) {
               onChange={handleInputChange}
               required
               className='border px-2.5 py-1.5 rounded text-sm'
+            />
+          </div>
+
+          <div>
+            <label
+              htmlFor='date'
+              className='block text-sm font-medium text-gray-700'
+            >
+              Date
+            </label>
+            <input
+              type='date'
+              id='date'
+              name='date'
+              value={newItem.date}
+              onChange={handleInputChange}
+              className='mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50'
+            />
+          </div>
+
+          <div>
+            <label
+              htmlFor='time'
+              className='block text-sm font-medium text-gray-700'
+            >
+              Time
+            </label>
+            <input
+              type='time'
+              id='time'
+              name='time'
+              value={newItem.time}
+              onChange={handleInputChange}
+              className='mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50'
             />
           </div>
 
