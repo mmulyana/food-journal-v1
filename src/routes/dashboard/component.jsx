@@ -14,8 +14,12 @@ import {
   isSameDay,
   isToday,
 } from 'date-fns'
+import { useAtomValue } from 'jotai'
+import { profileAtom } from '../../atom/user'
 
 export function AddModal({ fetchItems }) {
+  const profile = useAtomValue(profileAtom)
+
   const [isOpen, setIsOpen] = useState(false)
   const [newItem, setNewItem] = useState({
     name: '',
@@ -44,6 +48,7 @@ export function AddModal({ fetchItems }) {
     const itemToAdd = {
       ...newItem,
       createdAt: submissionDate,
+      userId: profile.id,
     }
     if (file) {
       const storageRef = ref(storage, `images/${file.name}`)
@@ -178,6 +183,7 @@ export function AddModal({ fetchItems }) {
 }
 
 export function Header({ selectedDate, setSelectedDate }) {
+  const profile = useAtomValue(profileAtom)
   const [currentDate, setCurrentDate] = useState(new Date())
 
   const navigateWeek = (direction) => {
@@ -200,10 +206,20 @@ export function Header({ selectedDate, setSelectedDate }) {
 
   return (
     <div className='h-fit bg-white mb-7 px-4 pt-4 pb-5 border-b border-gray-200 rounded-b-xl'>
-      <div className='flex justify-between items-center mb-2'>
-        <p className='text-lg font-medium text-orange-600 mb-2.5'>
-          Food Journal
-        </p>
+      <div className='flex justify-between items-center mb-4'>
+        <div className='flex items-center gap-2'>
+          <div className='w-8 h-8 rounded-full overflow-hidden'>
+            <img
+              src={
+                profile?.photoUrl !== ''
+                  ? profile?.profile
+                  : 'https://github.com/shadcn.png'
+              }
+              alt='photo profile'
+            />
+          </div>
+          <p>{profile?.username}</p>
+        </div>
         <div className='flex gap-2'>
           <ChevronLeft
             onClick={() => navigateWeek('prev')}
