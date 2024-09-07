@@ -1,15 +1,28 @@
-import { collection, getDocs, orderBy, query, where } from 'firebase/firestore'
+import {
+  collection,
+  getDocs,
+  getDoc,
+  doc,
+  orderBy,
+  query,
+  where,
+} from 'firebase/firestore'
 import { db } from '../../utils/firebase'
-import Card from '../../components/card'
-import { AddModal, Header } from './component'
 import { useEffect, useState } from 'react'
+import { AddModal, Header } from './component'
 import { startOfDay, endOfDay } from 'date-fns'
+import { profileAtom } from '../../atom/user'
+import { useAtom, useAtomValue } from 'jotai'
 import Container from '../../components/container'
+import Card from '../../components/card'
+
 export default function Dashboard() {
+  const profile = useAtomValue(profileAtom)
   const [items, setItems] = useState([])
   const [selectedDate, setSelectedDate] = useState(new Date())
 
   useEffect(() => {
+    if (!profile) return
     fetchItems()
   }, [selectedDate])
 
@@ -19,6 +32,7 @@ export default function Dashboard() {
 
     const q = query(
       collection(db, 'items'),
+      where('userId', '==', profile.id),
       where('createdAt', '>=', start),
       where('createdAt', '<=', end),
       orderBy('createdAt', 'desc')
