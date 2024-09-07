@@ -1,8 +1,9 @@
 import { createUserWithEmailAndPassword } from 'firebase/auth'
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { auth } from '../../utils/firebase'
+import { auth, db } from '../../utils/firebase'
 import Container from '../../components/container'
+import { doc, setDoc } from 'firebase/firestore'
 
 export default function Register() {
   const navigate = useNavigate()
@@ -20,7 +21,17 @@ export default function Register() {
   const handleSubmit = async (e) => {
     e.preventDefault()
     try {
-      await createUserWithEmailAndPassword(auth, form.email, form.password)
+      const registeredUser = await createUserWithEmailAndPassword(
+        auth,
+        form.email,
+        form.password
+      )
+      await setDoc(doc(db, 'users', registeredUser.user.uid), {
+        username: form.username,
+        email: form.email,
+        joinDate: new Date(),
+        photoUrl: '',
+      })
       navigate('/')
     } catch (error) {
       console.log(error)
@@ -49,7 +60,7 @@ export default function Register() {
             </label>
             <input
               type='text'
-              name='name'
+              name='username'
               value={form.username}
               onChange={handleChange}
               required
