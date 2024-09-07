@@ -2,23 +2,25 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import { PATH } from '../constant/_path'
 import { lazy, Suspense } from 'react'
 const Dashboard = lazy(() => import('./dashboard'))
+const Login = lazy(() => import('./auth/login'))
+const Register = lazy(() => import('./auth/register'))
 
 const useRoutes = () => [
   {
     path: PATH.LOGIN,
-    component: null,
+    component: <Login />,
   },
   {
     path: PATH.REGISTER,
-    component: null,
+    component: <Register />,
   },
   {
     path: PATH.BASE,
-    component: <Dashboard />,
+    component: <Login />,
   },
   {
     path: PATH.DASHBOARD,
-    component: null,
+    component: <Dashboard />,
   },
   {
     path: PATH.NOT_FOUND,
