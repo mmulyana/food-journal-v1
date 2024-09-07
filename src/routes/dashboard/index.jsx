@@ -4,6 +4,7 @@ import Card from '../../components/card'
 import { AddModal, Header } from './component'
 import { useEffect, useState } from 'react'
 import { startOfDay, endOfDay } from 'date-fns'
+import Container from '../../components/container'
 export default function Dashboard() {
   const [items, setItems] = useState([])
   const [selectedDate, setSelectedDate] = useState(new Date())
@@ -31,14 +32,12 @@ export default function Dashboard() {
   }
 
   return (
-    <>
-      <div className='max-w-[400px] mx-auto'>
-        <Header setSelectedDate={setSelectedDate} selectedDate={selectedDate} />
-        {items.map((item) => (
-          <Card item={item} key={item.id} />
-        ))}
-        <AddModal fetchItems={fetchItems} />
-      </div>
-    </>
+    <Container>
+      <Header setSelectedDate={setSelectedDate} selectedDate={selectedDate} />
+      {items.map((item) => (
+        <Card item={item} key={item.id} />
+      ))}
+      <AddModal fetchItems={fetchItems} />
+    </Container>
   )
 }
